@@ -8,6 +8,7 @@ TagManager:
   - GameManager
   - Obstacles
   - Collectable
+  - Seeker
   layers:
   - Default
   - TransparentFX

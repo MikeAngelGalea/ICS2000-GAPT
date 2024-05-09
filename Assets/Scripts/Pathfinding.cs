@@ -6,12 +6,28 @@ public class Pathfinding : MonoBehaviour {
     public Transform seeker, target;
     Grid grid;
 
+    Vector3 lastSeekerPosition;
+
     void Awake() {
         grid = GetComponent<Grid>();
+        lastSeekerPosition = seeker.position;
     }
 
     void Update() {
-        FindPath(seeker.position, target.position);
+        // Check if the seeker/player position has changed
+        Vector3 currentPlayerPosition = GetPlayerPosition();
+        if (Vector3.Distance(seeker.position, lastSeekerPosition) > 0.01f)
+        {
+            lastSeekerPosition = seeker.position;
+
+            // Find a new path
+            FindPath(seeker.position, target.position);
+        }
+    }
+
+    Vector3 GetPlayerPosition()
+    {
+        return seeker.position;
     }
 
     void FindPath(Vector3 startPos, Vector3 targetPos) {
@@ -66,7 +82,7 @@ public class Pathfinding : MonoBehaviour {
         }
         path.Reverse();
 
-        grid.path = path;
+        grid.UpdatePath(path);
     }
 
     int GetDistance(Node nodeA, Node nodeB) {
@@ -75,4 +91,11 @@ public class Pathfinding : MonoBehaviour {
 
         return 10 * (dstX + dstY); 
     }
-}//end of program
+
+}
+
+public static class TransformExtensions
+{
+    // Custom hasChanged property for Transform
+    public static bool hasChanged { get; set; }
+}

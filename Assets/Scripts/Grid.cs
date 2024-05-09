@@ -1,8 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+
 public class Grid : MonoBehaviour
 {
+    public List<Node> path;
     public LayerMask unwalkableMask;
     public Vector2 gridWorldSize;
     public float nodeRadius;
@@ -10,7 +12,14 @@ public class Grid : MonoBehaviour
 
     float nodeDiameter;
     int gridSizeX, gridSizeY;
+<<<<<<< Updated upstream
     //branch testing
+=======
+
+    GameObject player; // Reference to the player object
+    GameObject collectible; // Reference to the collectible object
+
+>>>>>>> Stashed changes
     Camera mainCamera;
 //michele
     void Start()
@@ -19,19 +28,30 @@ public class Grid : MonoBehaviour
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
         CreateGrid();
+<<<<<<< Updated upstream
         //test
         mainCamera = Camera.main;
+=======
+
+        player = GameObject.FindGameObjectWithTag("Player");
+        collectible = GameObject.FindGameObjectWithTag("Collectible");
+
+        if (player == null)
+            Debug.LogError("Player object not found! Make sure it is tagged as 'Player'.");
+        
+        if (collectible == null)
+            Debug.LogError("Collectible object not found! Make sure it is tagged as 'Collectible'.");
+>>>>>>> Stashed changes
     }
 
     void Update()
     {
-        UpdateGridPosition();
         UpdateGrid();
     }
 
     void UpdateGridPosition()
     {
-        transform.position = mainCamera.transform.position;
+        //transform.position = mainCamera.transform.position;
     }
 
     void CreateGrid()
@@ -85,6 +105,11 @@ public class Grid : MonoBehaviour
         }
     }
 
+    public void UpdatePath(List<Node> newPath)
+{
+    path = newPath;
+}
+
     bool IsNodeWalkable(Node node)
     {
         // Check if any colliders intersect with the node
@@ -104,47 +129,93 @@ public class Grid : MonoBehaviour
     }
 
     public Node NodeFromWorldPoint(Vector3 worldPosition) {
-    float percentX = (worldPosition.x + gridWorldSize.x / 2f) / gridWorldSize.x;
-    float percentY = (worldPosition.z + gridWorldSize.y / 2f) / gridWorldSize.y; // Using z for 2D
+        float percentX = (worldPosition.x + gridWorldSize.x / 2f) / gridWorldSize.x;
+        float percentY = (worldPosition.z + gridWorldSize.y / 2f) / gridWorldSize.y; // Using z for 2D
 
-    percentX = Mathf.Clamp01(percentX);
-    percentY = Mathf.Clamp01(percentY);
+        percentX = Mathf.Clamp01(percentX);
+        percentY = Mathf.Clamp01(percentY);
 
-    int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
-    int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
+        int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
+        int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
 
-    return grid[x, y];
+        return grid[x, y];
+    }
+
+
+   void OnDrawGizmos()
+    {
+        if (grid != null)
+        {
+            foreach (Node n in grid)
+            {
+                // Set color based on walkability and obstacles
+                if (!n.walkable)
+                {
+                    Gizmos.color = Color.red; // Color nodes with obstacles red
+                }
+                else if (path != null && path.Contains(n))
+                {
+                    Gizmos.color = Color.black; // Color path nodes black
+                }
+                else if (IsNodeSeeker(n))
+                {
+                    Gizmos.color = new Color(1.0f, 0.84f, 0.0f); // Color player node gold
+                }
+                else if (IsNodeObstacle(n))
+                {
+                    Gizmos.color = Color.blue; // Color obstacle nodes blue
+                }
+                else if (IsNodeTarget(n))
+                {
+                    Gizmos.color = Color.green; // Color target nodes green
+                }
+                else
+                {
+                    Gizmos.color = Color.white; // Color walkable nodes white
+                }
+
+                // Draw cube as a square in 2D
+                Gizmos.DrawCube(n.worldPosition, new Vector3(nodeDiameter - 0.1f, nodeDiameter - 0.1f, 0));
+            }
+        }
+    }
+
+
+bool IsNodeObstacle(Node node)
+{
+    // Check if there is any collider at the node's position
+    Collider2D[] colliders = Physics2D.OverlapCircleAll(node.worldPosition, nodeRadius);
+    foreach (Collider2D collider in colliders)
+    {
+        if (collider.gameObject.layer == LayerMask.NameToLayer("Unwalkable"))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
-public List<Node> path;
-    void OnDrawGizmos()
-{
-    // Get the current camera position
-    Vector3 cameraPosition = mainCamera.transform.position;
-
-    // Draw the grid wireframe
-    Vector3 gridPosition = transform.position;
-    Gizmos.DrawWireCube(gridPosition, new Vector3(gridWorldSize.x, gridWorldSize.y, 0));
-
-    if (grid != null)
+bool IsNodeSeeker(Node node)
     {
-        foreach (Node n in grid)
+        // Check if the node's position matches the player's position
+        if (player != null && Vector3.Distance(node.worldPosition, player.transform.position) < nodeRadius)
         {
-            // Calculate the node's position relative to the camera movement
-            Vector3 nodePosition = new Vector3(n.worldPosition.x + gridPosition.x - cameraPosition.x,
-                                               n.worldPosition.y + gridPosition.y - cameraPosition.y,
-                                               0);
-
-            // Draw the node with different colors based on walkability
-            Gizmos.color = (n.walkable) ? Color.white : Color.red;
-            if (path != null && path.Contains(n))
-                Gizmos.color = Color.black;
-
-            // Draw cube as a square in 2D
-            Gizmos.DrawCube(nodePosition, new Vector3(nodeDiameter - 0.1f, nodeDiameter - 0.1f, 0));
+            return true;
         }
+        return false;
+    }
+
+bool IsNodeTarget(Node node)
+    {
+        // Check if the node's position matches the collectible's position
+        if (collectible != null && Vector3.Distance(node.worldPosition, collectible.transform.position) < nodeRadius)
+        {
+            return true;
+        }
+        return false;
     }
 }
 
 
-}
+
+
