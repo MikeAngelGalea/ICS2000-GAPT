@@ -15,7 +15,7 @@ public class Grid : MonoBehaviour
 
     void Start()
     {
-        nodeDiameter = nodeRadius * 2;
+        nodeDiameter = nodeRadius * 1;
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
         CreateGrid();
