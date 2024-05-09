@@ -12,14 +12,12 @@ public class Grid : MonoBehaviour
 
     float nodeDiameter;
     int gridSizeX, gridSizeY;
-<<<<<<< Updated upstream
-    //branch testing
-=======
+
 
     GameObject player; // Reference to the player object
     GameObject collectible; // Reference to the collectible object
 
->>>>>>> Stashed changes
+
     Camera mainCamera;
 //michele
     void Start()
@@ -28,10 +26,9 @@ public class Grid : MonoBehaviour
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
         CreateGrid();
-<<<<<<< Updated upstream
-        //test
+
         mainCamera = Camera.main;
-=======
+
 
         player = GameObject.FindGameObjectWithTag("Player");
         collectible = GameObject.FindGameObjectWithTag("Collectible");
@@ -41,7 +38,7 @@ public class Grid : MonoBehaviour
         
         if (collectible == null)
             Debug.LogError("Collectible object not found! Make sure it is tagged as 'Collectible'.");
->>>>>>> Stashed changes
+
     }
 
     void Update()
