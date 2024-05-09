@@ -12,7 +12,7 @@ public class Grid : MonoBehaviour
     int gridSizeX, gridSizeY;
     //branch testing
     Camera mainCamera;
-
+//michele
     void Start()
     {
         nodeDiameter = nodeRadius * 2;
