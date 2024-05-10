@@ -24,8 +24,8 @@ public class Pathfinding : MonoBehaviour {
         return;
     }
 
-    Debug.Log("Seeker position: " + seeker.position);
-    Debug.Log("Target position: " + target.position);
+    //Debug.Log("Seeker position: " + seeker.position);
+    //Debug.Log("Target position: " + target.position);
 
     // Update the seeker's position to match the player's position
     seeker.position = GetPlayerPosition();
@@ -43,25 +43,25 @@ public class Pathfinding : MonoBehaviour {
     }
         // Return the current player's position
         Vector3 playerPosition = seeker.transform.position;
-        Debug.Log("Player position: " + playerPosition); // Output player position for debugging
+        //Debug.Log("Player position: " + playerPosition); // Output player position for debugging
         return playerPosition;
     }
 
     void FindPath(Vector3 startPos, Vector3 targetPos) {
         if (grid == null) {
-            Debug.LogError("Grid component not found! Aborting pathfinding.");
+            //Debug.LogError("Grid component not found! Aborting pathfinding.");
             return;
         }
         Node startNode = grid.NodeFromWorldPoint(startPos);
         Node targetNode = grid.NodeFromWorldPoint(targetPos);
 
         if (targetNode == null) {
-            Debug.LogError("Target node not found!");
+            //Debug.LogError("Target node not found!");
             return;
         }
 
-        Debug.Log("Start node: " + startNode.worldPosition);
-        Debug.Log("Target node: " + targetNode.worldPosition);
+        //Debug.Log("Start node: " + startNode.worldPosition);
+        //Debug.Log("Target node: " + targetNode.worldPosition);
 
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();

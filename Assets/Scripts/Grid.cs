@@ -67,11 +67,26 @@ public class Grid : MonoBehaviour
             for (int y = 0; y < gridSizeY; y++)
             {
                 Vector2 worldPoint = (Vector2)worldBottomLeft + Vector2.right * (x * nodeDiameter + nodeRadius) + Vector2.up * (y * nodeDiameter + nodeRadius);
-                bool walkable = !(Physics.CheckSphere(new Vector3(worldPoint.x, worldPoint.y, 0), nodeRadius, unwalkableMask));
+                bool walkable = IsNodeWalkable(worldPoint); // Use the method to check if node is walkable
 
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
             }
         }
+    }
+
+    bool IsNodeWalkable(Vector2 worldPosition)
+    {
+         Collider2D[] colliders = Physics2D.OverlapCircleAll(worldPosition, nodeRadius);
+    foreach (Collider2D collider in colliders)
+    {
+        if (collider != null && (collider.CompareTag("Obstacles") || collider.gameObject.layer == LayerMask.NameToLayer("Unwalkable")))
+        {
+            Debug.Log("Unwalkable node detected at position: " + worldPosition);
+            return false;
+        }
+    }
+    Debug.Log("Walkable node detected at position: " + worldPosition);
+    return true;
     }
 
     void DestroyGrid()
@@ -82,8 +97,6 @@ public class Grid : MonoBehaviour
             gridObjects.RemoveAt(0);
         }
     }
-
-    // Other methods for pathfinding and grid manipulation...
 
     public List<Node> GetNeighbours(Node node)
     {
@@ -106,21 +119,6 @@ public class Grid : MonoBehaviour
         return neighbours;
     }
 
-    bool IsNodeWalkable(Node node)
-    {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(node.worldPosition, nodeRadius);
-
-        foreach (Collider2D collider in colliders)
-        {
-            if (collider.CompareTag("Obstacles") || collider.gameObject.layer == LayerMask.NameToLayer("UnWalkable"))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public Node NodeFromWorldPoint(Vector3 worldPosition)
     {
         float percentX = (worldPosition.x + gridWorldSize.x / 2f) / gridWorldSize.x;
@@ -141,37 +139,44 @@ public class Grid : MonoBehaviour
     }
 
     void OnDrawGizmos()
+{
+    Debug.Log("Drawing gizmos...");
+    if (grid != null)
     {
-        if (grid != null)
+        foreach (Node n in grid)
         {
-            foreach (Node n in grid)
+            //Debug.Log("Processing node at position: " + n.worldPosition);
+
+            if (!n.walkable)
             {
-                if (n == null || n.worldPosition == null) continue;
-
-                if (!n.walkable)
-                {
-                    Gizmos.color = Color.red;
-                }
-                else if (path != null && path.Contains(n))
-                {
-                    Gizmos.color = Color.black;
-                }
-                else
-                {
-                    Gizmos.color = Color.white;
-                }
-
-                Gizmos.DrawCube(n.worldPosition, new Vector3(nodeDiameter - 0.1f, nodeDiameter - 0.1f, 0));
+                //Debug.Log("Node at position " + n.worldPosition + " is unwalkable. Setting color to red.");
+                Gizmos.color = Color.red;
             }
+            else if (path != null && path.Contains(n))
+            {
+                //Debug.Log("Node at position " + n.worldPosition + " is part of the path. Setting color to black.");
+                Gizmos.color = Color.black;
+            }
+            else
+            {
+                //Debug.Log("Node at position " + n.worldPosition + " is walkable and not part of the path. Setting color to white.");
+                Gizmos.color = Color.white;
+            }
+
+            Gizmos.DrawCube(n.worldPosition, new Vector3(nodeDiameter - 0.1f, nodeDiameter - 0.1f, 0));
+        }
+    
+
+
 
             // Debugging the start and end nodes of the path
             if (path != null && path.Count > 0)
             {
                 // Output the position of the start (blue) box
-                Debug.Log("Start node position: " + path[0].worldPosition);
+                //Debug.Log("Start node position: " + path[0].worldPosition);
 
                 // Output the position of the end (green) box
-                Debug.Log("End node position: " + path[path.Count - 1].worldPosition);
+                //Debug.Log("End node position: " + path[path.Count - 1].worldPosition);
 
                 Gizmos.color = Color.blue;
                 Gizmos.DrawCube(path[0].worldPosition, new Vector3(nodeDiameter - 0.1f, nodeDiameter - 0.1f, 0));

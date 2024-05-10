@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 314115985}
   m_Layer: 6
   m_Name: obstacles
-  m_TagString: Untagged
+  m_TagString: Obstacles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -264,7 +264,7 @@ MonoBehaviour:
   minX: -7.07
   maxY: 3.5
   minY: 3
-  TimeBetweenSpawn: 5
+  TimeBetweenSpawn: 6
   colliderRadius: 1
 --- !u!58 &320427929
 CircleCollider2D:
