@@ -11,28 +11,57 @@ public class Pathfinding : MonoBehaviour {
     void Awake() {
         grid = GetComponent<Grid>();
         lastSeekerPosition = seeker.position;
+
+        if (grid == null) {
+            Debug.LogError("Grid component not found!");
+        }
     }
 
     void Update() {
-        // Check if the seeker/player position has changed
-        Vector3 currentPlayerPosition = GetPlayerPosition();
-        if (Vector3.Distance(seeker.position, lastSeekerPosition) > 0.01f)
-        {
-            lastSeekerPosition = seeker.position;
+        Debug.Log("Update method called path!");
+        if (seeker == null || target == null)
+    {
+        return;
+    }
 
-            // Find a new path
-            FindPath(seeker.position, target.position);
-        }
+    Debug.Log("Seeker position: " + seeker.position);
+    Debug.Log("Target position: " + target.position);
+
+    // Update the seeker's position to match the player's position
+    seeker.position = GetPlayerPosition();
+
+    // Find a new path based on the updated seeker position and target position
+    FindPath(seeker.position, target.position);
     }
 
     Vector3 GetPlayerPosition()
     {
-        return seeker.position;
+        if (seeker == null)
+    {
+        Debug.LogWarning("Player object is missing!");
+        return Vector3.zero; // Return a default position if the player object is missing
+    }
+        // Return the current player's position
+        Vector3 playerPosition = seeker.transform.position;
+        Debug.Log("Player position: " + playerPosition); // Output player position for debugging
+        return playerPosition;
     }
 
     void FindPath(Vector3 startPos, Vector3 targetPos) {
+        if (grid == null) {
+            Debug.LogError("Grid component not found! Aborting pathfinding.");
+            return;
+        }
         Node startNode = grid.NodeFromWorldPoint(startPos);
         Node targetNode = grid.NodeFromWorldPoint(targetPos);
+
+        if (targetNode == null) {
+            Debug.LogError("Target node not found!");
+            return;
+        }
+
+        Debug.Log("Start node: " + startNode.worldPosition);
+        Debug.Log("Target node: " + targetNode.worldPosition);
 
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();
@@ -73,17 +102,18 @@ public class Pathfinding : MonoBehaviour {
     }
 
     void RetracePath(Node startNode, Node endNode) {
-        List<Node> path = new List<Node>();
-        Node currentNode = endNode;
+    List<Node> path = new List<Node>();
+    Node currentNode = endNode;
 
-        while (currentNode != startNode) {
-            path.Add(currentNode);
-            currentNode = currentNode.parent;
-        }
-        path.Reverse();
-
-        grid.UpdatePath(path);
+    while (currentNode != startNode) {
+        path.Add(currentNode);
+        currentNode = currentNode.parent;
     }
+    path.Reverse();
+
+    grid.UpdatePath(path); 
+    }
+
 
     int GetDistance(Node nodeA, Node nodeB) {
         int dstX = Mathf.Abs(nodeA.gridX - nodeB.gridX);

@@ -9,6 +9,7 @@ TagManager:
   - Obstacles
   - Collectable
   - Seeker
+  - Collectible
   layers:
   - Default
   - TransparentFX
