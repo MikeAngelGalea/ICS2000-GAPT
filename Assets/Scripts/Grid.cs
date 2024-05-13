@@ -1,3 +1,4 @@
+// Grid.cs
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -122,18 +123,42 @@ public class Grid : MonoBehaviour
     }
 
     public Node NodeFromWorldPoint(Vector3 worldPosition)
-    {
-        float percentX = (worldPosition.x + gridWorldSize.x / 2f) / gridWorldSize.x;
-        float percentY = (worldPosition.z + gridWorldSize.y / 2f) / gridWorldSize.y;
+{
+    Node closestNode = null;
+    float closestDistance = float.MaxValue;
 
-        percentX = Mathf.Clamp01(percentX);
-        percentY = Mathf.Clamp01(percentY);
+    foreach (GameObject gridObject in gridObjects)
+    {
+        // Calculate the position of the bottom left corner of the grid
+        Vector3 worldBottomLeft = gridObject.transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.up * gridWorldSize.y / 2;
+
+        // Convert the world position to grid coordinates within the current grid object
+        float percentX = Mathf.Clamp01((worldPosition.x - worldBottomLeft.x) / gridWorldSize.x);
+        float percentY = Mathf.Clamp01((worldPosition.y - worldBottomLeft.y) / gridWorldSize.y);
 
         int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
         int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
 
-        return grid[x, y]; // Return node from the first grid
+        // Ensure the coordinates are within bounds
+        x = Mathf.Clamp(x, 0, gridSizeX - 1);
+        y = Mathf.Clamp(y, 0, gridSizeY - 1);
+
+        // Get the node at the calculated coordinates
+        Node node = grid[x, y];
+
+        // Calculate the distance from the world position to the node
+        float distance = Vector3.Distance(worldPosition, node.worldPosition);
+
+        // Update the closest node if the current node is closer
+        if (distance < closestDistance)
+        {
+            closestNode = node;
+            closestDistance = distance;
+        }
     }
+
+    return closestNode;
+}
 
     public void UpdatePath(List<Node> newPath)
     {
