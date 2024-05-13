@@ -1195,7 +1195,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seeker: {fileID: 1402893834}
-  target: {fileID: 510924783}
 --- !u!1 &1245252219
 GameObject:
   m_ObjectHideFlags: 0
