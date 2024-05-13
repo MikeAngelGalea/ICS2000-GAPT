@@ -32,24 +32,20 @@ public class Grid : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("Update method called grid!");
-        UpdateGridPosition();
+        // Update the grid continuously
+        UpdateGrid();
     }
 
-    void UpdateGridPosition()
+    void UpdateGrid()
     {
-        // Only update grid position if the player moves a certain distance
-        float playerYPosition = transform.position.y;
-        float offset = playerYPosition - currentGridOffset;
-
-        if (offset > gridSpawnOffset)
+        // Iterate through all nodes in the grid
+        foreach (Node node in grid)
         {
-            // Spawn a new grid behind the current grid
-            SpawnGrid();
-            // Destroy the first grid
-            DestroyGrid();
-            // Update the current grid offset
-            currentGridOffset += gridSpawnOffset;
+            // Check if the node is walkable
+            bool walkable = IsNodeWalkable(node.worldPosition);
+
+            // Update the node's walkable status
+            node.walkable = walkable;
         }
     }
 
@@ -77,13 +73,21 @@ public class Grid : MonoBehaviour
 
     bool IsNodeWalkable(Vector2 worldPosition)
     {
-         Collider2D[] colliders = Physics2D.OverlapCircleAll(worldPosition, nodeRadius);
-    foreach (Collider2D collider in colliders)
-    {
-        if (collider != null && (collider.CompareTag("Obstacles") || collider.gameObject.layer == LayerMask.NameToLayer("Unwalkable")))
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(worldPosition, nodeRadius);
+        foreach (Collider2D collider in colliders)
         {
-            Debug.Log("Unwalkable node detected at position: " + worldPosition);
-            return false;
+        if (collider != null)
+        {
+            if (collider.CompareTag("Obstacles") || collider.gameObject.layer == LayerMask.NameToLayer("Unwalkable"))
+            {
+                Debug.Log("Unwalkable node detected at position: " + worldPosition);
+                return false;
+            }
+            else if (collider.CompareTag("Collectible")) // Check for collectible objects
+            {
+                Debug.Log("Collectible node detected at position: " + worldPosition);
+                return true;
+            }
         }
     }
     Debug.Log("Walkable node detected at position: " + worldPosition);
@@ -121,42 +125,42 @@ public class Grid : MonoBehaviour
     }
 
     public Node NodeFromWorldPoint(Vector3 worldPosition)
-{
-    Node closestNode = null;
-    float closestDistance = float.MaxValue;
-
-    foreach (GameObject gridObject in gridObjects)
     {
-        // Calculate the position of the bottom left corner of the grid
-        Vector3 worldBottomLeft = gridObject.transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.up * gridWorldSize.y / 2;
+        Node closestNode = null;
+        float closestDistance = float.MaxValue;
 
-        // Convert the world position to grid coordinates within the current grid object
-        float percentX = Mathf.Clamp01((worldPosition.x - worldBottomLeft.x) / gridWorldSize.x);
-        float percentY = Mathf.Clamp01((worldPosition.y - worldBottomLeft.y) / gridWorldSize.y);
-
-        int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
-        int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
-
-        // Ensure the coordinates are within bounds
-        x = Mathf.Clamp(x, 0, gridSizeX - 1);
-        y = Mathf.Clamp(y, 0, gridSizeY - 1);
-
-        // Get the node at the calculated coordinates
-        Node node = grid[x, y];
-
-        // Calculate the distance from the world position to the node
-        float distance = Vector3.Distance(worldPosition, node.worldPosition);
-
-        // Update the closest node if the current node is closer
-        if (distance < closestDistance)
+        foreach (GameObject gridObject in gridObjects)
         {
-            closestNode = node;
-            closestDistance = distance;
-        }
-    }
+            // Calculate the position of the bottom left corner of the grid
+            Vector3 worldBottomLeft = gridObject.transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.up * gridWorldSize.y / 2;
 
-    return closestNode;
-}
+            // Convert the world position to grid coordinates within the current grid object
+            float percentX = Mathf.Clamp01((worldPosition.x - worldBottomLeft.x) / gridWorldSize.x);
+            float percentY = Mathf.Clamp01((worldPosition.y - worldBottomLeft.y) / gridWorldSize.y);
+
+            int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
+            int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
+
+            // Ensure the coordinates are within bounds
+            x = Mathf.Clamp(x, 0, gridSizeX - 1);
+            y = Mathf.Clamp(y, 0, gridSizeY - 1);
+
+            // Get the node at the calculated coordinates
+            Node node = grid[x, y];
+
+            // Calculate the distance from the world position to the node
+            float distance = Vector3.Distance(worldPosition, node.worldPosition);
+
+            // Update the closest node if the current node is closer
+            if (distance < closestDistance)
+            {
+                closestNode = node;
+                closestDistance = distance;
+            }
+        }
+
+        return closestNode;
+    }
 
     public void UpdatePath(List<Node> newPath)
     {
@@ -170,45 +174,48 @@ public class Grid : MonoBehaviour
     {
         foreach (Node n in grid)
         {
-            //Debug.Log("Processing node at position: " + n.worldPosition);
-
             if (!n.walkable)
             {
-                //Debug.Log("Node at position " + n.worldPosition + " is unwalkable. Setting color to red.");
                 Gizmos.color = Color.red;
             }
             else if (path != null && path.Contains(n))
             {
-                //Debug.Log("Node at position " + n.worldPosition + " is part of the path. Setting color to black.");
                 Gizmos.color = Color.black;
+            }
+            else if (IsNodeAboveCollectible(n.worldPosition)) // Check if the node is above a collectible object
+            {
+                Gizmos.color = Color.green;
             }
             else
             {
-                //Debug.Log("Node at position " + n.worldPosition + " is walkable and not part of the path. Setting color to white.");
                 Gizmos.color = Color.white;
             }
 
             Gizmos.DrawCube(n.worldPosition, new Vector3(nodeDiameter - 0.1f, nodeDiameter - 0.1f, 0));
         }
-    
 
+        if (path != null && path.Count > 0)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawCube(path[0].worldPosition, new Vector3(nodeDiameter - 0.1f, nodeDiameter - 0.1f, 0));
 
-
-            // Debugging the start and end nodes of the path
-            if (path != null && path.Count > 0)
-            {
-                // Output the position of the start (blue) box
-                //Debug.Log("Start node position: " + path[0].worldPosition);
-
-                // Output the position of the end (green) box
-                //Debug.Log("End node position: " + path[path.Count - 1].worldPosition);
-
-                Gizmos.color = Color.blue;
-                Gizmos.DrawCube(path[0].worldPosition, new Vector3(nodeDiameter - 0.1f, nodeDiameter - 0.1f, 0));
-
-                Gizmos.color = Color.green;
-                Gizmos.DrawCube(path[path.Count - 1].worldPosition, new Vector3(nodeDiameter - 0.1f, nodeDiameter - 0.1f, 0));
-            }
+            Gizmos.color = Color.green; // Change color to green for the end node
+            Gizmos.DrawCube(path[path.Count - 1].worldPosition, new Vector3(nodeDiameter - 0.1f, nodeDiameter - 0.1f, 0));
         }
     }
+}
+
+bool IsNodeAboveCollectible(Vector2 worldPosition)
+{
+    Collider2D[] colliders = Physics2D.OverlapCircleAll(worldPosition, nodeRadius);
+    foreach (Collider2D collider in colliders)
+    {
+        if (collider != null && collider.CompareTag("Collectible"))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 }
