@@ -92,6 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cac257a3b385543298817fe55e3a6de9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CameraSpeed: 0.3
 --- !u!50 &5422005245907030121
 Rigidbody2D:
   serializedVersion: 4
