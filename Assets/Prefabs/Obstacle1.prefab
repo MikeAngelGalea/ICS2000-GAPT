@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8476272386352129240}
   - component: {fileID: -5955074486045787267}
   - component: {fileID: 8854439496811887831}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Obstacle1
   m_TagString: Obstacles
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   - component: {fileID: 7667857578558283961}
   - component: {fileID: 3685833621916454241}
   - component: {fileID: 8919798585189775214}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: asteroid_01_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}

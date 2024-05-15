@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5442623492343007753}
   - component: {fileID: -9021003856419343605}
   - component: {fileID: 6505830370440290216}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Obstacle2
   m_TagString: Obstacles
   m_Icon: {fileID: 0}
@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 5183662251439383104}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.3719724, y: 2.83762, z: -1.1539005}
+  m_LocalPosition: {x: 0.3719724, y: 2.83762, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -121,7 +121,7 @@ GameObject:
   - component: {fileID: 6058994887327036437}
   - component: {fileID: 9147079582832685908}
   - component: {fileID: 2460543057419531455}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: asteroid_01_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
