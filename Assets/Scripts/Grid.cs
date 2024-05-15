@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class Grid : MonoBehaviour
 {
+    //public Grid grid;
+    public float NodeDiameter { get { return nodeDiameter; } }
     public List<Node> path;
     public LayerMask unwalkableMask;
     public Vector2 gridWorldSize;
@@ -80,17 +82,17 @@ public class Grid : MonoBehaviour
         {
             if (collider.CompareTag("Obstacles") || collider.gameObject.layer == LayerMask.NameToLayer("Unwalkable"))
             {
-                Debug.Log("Unwalkable node detected at position: " + worldPosition);
+                //Debug.Log("Unwalkable node detected at position: " + worldPosition);
                 return false;
             }
             else if (collider.CompareTag("Collectible")) // Check for collectible objects
             {
-                Debug.Log("Collectible node detected at position: " + worldPosition);
+                //Debug.Log("Collectible node detected at position: " + worldPosition);
                 return true;
             }
         }
     }
-    Debug.Log("Walkable node detected at position: " + worldPosition);
+    //Debug.Log("Walkable node detected at position: " + worldPosition);
     return true;
     }
 

@@ -20,10 +20,6 @@ public class NewBehaviourScript : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-        else if (collision.tag == "Player")
-        {
-            Destroy(Player.gameObject);
-        }
     }
 
     // Update is called once per frame

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class Pathfinding : MonoBehaviour
 {
+    public PlayerController playerController;
     public Transform seeker;
     Grid grid;
 
@@ -37,7 +38,7 @@ public class Pathfinding : MonoBehaviour
         if (closestCollectible != null)
         {
             Vector3 closestCollectiblePosition = closestCollectible.worldPosition;
-            Debug.Log("Closest Collectible Position: " + closestCollectiblePosition);
+            //Debug.Log("Closest Collectible Position: " + closestCollectiblePosition);
             FindPath(seeker.position, closestCollectiblePosition);
         }
     }
@@ -48,8 +49,8 @@ public class Pathfinding : MonoBehaviour
         Node targetNode = grid.NodeFromWorldPoint(targetPos);
 
         // Debug output
-        Debug.Log("Start Node: " + startNode.worldPosition);
-        Debug.Log("Target Node: " + targetNode.worldPosition);
+        //Debug.Log("Start Node: " + startNode.worldPosition);
+        //Debug.Log("Target Node: " + targetNode.worldPosition);
 
 
 		List<Node> openSet = new List<Node>();
@@ -112,4 +113,11 @@ public class Pathfinding : MonoBehaviour
 			return 14*dstY + 10* (dstX-dstY);
 		return 14*dstX + 10 * (dstY-dstX);
 	}
+
+    // Method to set the path for the player
+    public void SetPath(Vector3[] newPath)
+    {
+        // Pass the new path to the PlayerController script
+        playerController.SetPath(newPath);
+    }
 }
