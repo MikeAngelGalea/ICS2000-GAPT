@@ -10,7 +10,9 @@ public class PlayerController : MonoBehaviour
 
     private Grid grid;
 
-    public GameObject GameOverPanel; // Reference to the game over panel
+    public GameObject GameOverPanel;
+
+    public HealthScript healthScript;
 
     void Start()
     {
@@ -195,12 +197,10 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    void TakeDamage(int damage)
+    // Make the TakeDamage method accessible from other classes
+    public void TakeDamage(int damage)
     {
-        // Reduce health or perform other actions
-        // In this case, we'll just end the game when the player takes damage
-        Debug.Log("Player took damage!");
-        GameOverPanel.SetActive(true); // Activate the game over panel
+        // Call the TakeDamage method of HealthScript
+        healthScript.TakeDamage(damage);
     }
 }
-
