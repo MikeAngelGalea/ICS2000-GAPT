@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class HealthScript : MonoBehaviour
 {
-    public int maxHealth = 3; // Maximum health of the player
-    private int currentHealth; // Current health of the player
+    public int maxHealth = 3; // max health of  player
+    private int currentHealth; // current health of player
 
-    // Reference to the HealthBar component
+    // healthbar component
     public HealthBar healthBar;
 
-    // Reference to the Game Over canvas
+    // game over canvas
     public GameObject gameOverCanvas;
 
     void Start()
@@ -21,7 +21,7 @@ public class HealthScript : MonoBehaviour
     {
         if (other.CompareTag("Obstacles"))
         {
-            TakeDamage(1); // Reduce health by 1 when colliding with an obstacle
+            TakeDamage(1); // reducing health by 1 when colliding with an obstacle (meteordoids)
             Destroy(other.gameObject);
         }
     }
@@ -32,8 +32,8 @@ public class HealthScript : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            currentHealth = 0; // Ensure health doesn't go below 0
-            GameOver(); // Call GameOver method
+            currentHealth = 0; // ensuring health doesn't go below 0
+            GameOver(); // calling gameover method
         }
 
         UpdateHealthUI();
@@ -41,7 +41,7 @@ public class HealthScript : MonoBehaviour
 
     void UpdateHealthUI()
     {
-        // Update the health value using a method from the HealthBar script
+        // updating the health value using a method from the healthbar script
         if (healthBar != null)
         {
             healthBar.SetHealth(currentHealth);
@@ -54,10 +54,10 @@ public class HealthScript : MonoBehaviour
 
     void GameOver()
     {
-        Debug.Log("Game Over!"); // Placeholder for game over logic
+        Debug.Log("Game Over!"); // placeholder for game over logic
         if (gameOverCanvas != null)
         {
-            gameOverCanvas.SetActive(true); // Show the Game Over canvas
+            gameOverCanvas.SetActive(true); // show the gameover canvas
         }
         else
         {

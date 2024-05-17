@@ -8,7 +8,7 @@ public class NewBehaviourScript : MonoBehaviour
 
     private GameObject Player;
 
-    // Start is called before the first frame update
+    // calling start before the first frame update
     void Start()
     {
         Player = GameObject.FindGameObjectWithTag("Player");
@@ -22,10 +22,10 @@ public class NewBehaviourScript : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    // calling update once per frame
     void Update()
     {
-        // Move the camera downwards
+        // moving the camera downwards
         transform.position -= new Vector3(0, CameraSpeed * Time.deltaTime, 0);
     }
 }

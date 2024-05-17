@@ -14,7 +14,7 @@ public class ObstacleSpawn : MonoBehaviour
 
     public float colliderRadius = 1f;
 
-    // Update is called once per frame
+    // calling update once per frame
     void Update()
     {
         if(Time.time>SpawnTime){
@@ -31,7 +31,7 @@ public class ObstacleSpawn : MonoBehaviour
 
         GameObject spawnedObstacle = Instantiate(obstacle, transform.position + new Vector3(X, Y, 0), transform.rotation);
         
-        // Add Circle Collider component
+        // adding circle collider component
         CircleCollider2D collider = spawnedObstacle.AddComponent<CircleCollider2D>();
         collider.radius = colliderRadius;
     }

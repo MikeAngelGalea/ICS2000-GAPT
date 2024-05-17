@@ -10,14 +10,14 @@ public class Node {
     public int gCost;
     public int hCost;
     public Node parent;
-
+// initialize new node
     public Node(bool _walkable, Vector2 _worldPos, int _gridX, int _gridY) {
         walkable = _walkable;
         worldPosition = _worldPos;
         gridX = _gridX;
         gridY = _gridY;
     }
-
+//calculation of total cost of the node
     public int fCost {
         get {
             return gCost + hCost;

@@ -5,10 +5,9 @@ public class GameController : MonoBehaviour
 {
     public GameObject GameOverPanel;
 
-    // Method to handle game over
     public void GameOver()
     {
-        // Display the game over panel or perform any other game over logic
+        // displaying of the game over panel
         GameOverPanel.SetActive(true);
     }
 

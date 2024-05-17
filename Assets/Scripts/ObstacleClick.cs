@@ -11,7 +11,7 @@ public class ObstacleClick : MonoBehaviour
         
     }
 
-    // Update is called once per frame
+    // calling update once per frame
     void Update()
     {
         if(Input.GetMouseButtonDown(0))

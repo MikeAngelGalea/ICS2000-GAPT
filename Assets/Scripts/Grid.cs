@@ -1,17 +1,15 @@
-// Grid.cs
 using UnityEngine;
 using System.Collections.Generic;
 
 public class Grid : MonoBehaviour
 {
-    //public Grid grid;
     public float NodeDiameter { get { return nodeDiameter; } }
     public List<Node> path;
     public LayerMask unwalkableMask;
     public Vector2 gridWorldSize;
     public float nodeRadius;
-    public int numGrids = 2; // Number of grids to spawn initially
-    public float gridSpawnOffset = 10f; // Offset between grids
+    public int numGrids = 2; 
+    public float gridSpawnOffset = 10f; 
 
     Node[,] grid;
     float nodeDiameter;
@@ -25,7 +23,7 @@ public class Grid : MonoBehaviour
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
 
-        // Spawn initial grids
+        // this covers the spawn of the initial grids
         for (int i = 0; i < numGrids; i++)
         {
             SpawnGrid();
@@ -34,19 +32,19 @@ public class Grid : MonoBehaviour
 
     void Update()
     {
-        // Update the grid continuously
+        // continuously updating the grid
         UpdateGrid();
     }
 
     void UpdateGrid()
     {
-        // Iterate through all nodes in the grid
+        // iteration of nodes in the grid
         foreach (Node node in grid)
         {
-            // Check if the node is walkable
+            // checking if node is walkable
             bool walkable = IsNodeWalkable(node.worldPosition);
 
-            // Update the node's walkable status
+            // update of status
             node.walkable = walkable;
         }
     }
@@ -66,7 +64,7 @@ public class Grid : MonoBehaviour
             for (int y = 0; y < gridSizeY; y++)
             {
                 Vector2 worldPoint = (Vector2)worldBottomLeft + Vector2.right * (x * nodeDiameter + nodeRadius) + Vector2.up * (y * nodeDiameter + nodeRadius);
-                bool walkable = IsNodeWalkable(worldPoint); // Use the method to check if node is walkable
+                bool walkable = IsNodeWalkable(worldPoint); 
 
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
             }
@@ -82,17 +80,14 @@ public class Grid : MonoBehaviour
         {
             if (collider.CompareTag("Obstacles") || collider.gameObject.layer == LayerMask.NameToLayer("Unwalkable"))
             {
-                //Debug.Log("Unwalkable node detected at position: " + worldPosition);
                 return false;
             }
-            else if (collider.CompareTag("Collectible")) // Check for collectible objects
+            else if (collider.CompareTag("Collectible")) // check for collectible objects
             {
-                //Debug.Log("Collectible node detected at position: " + worldPosition);
                 return true;
             }
         }
     }
-    //Debug.Log("Walkable node detected at position: " + worldPosition);
     return true;
     }
 
@@ -109,7 +104,7 @@ public class Grid : MonoBehaviour
     {
         List<Node> neighbours = new List<Node>();
 
-        int[] dx = { -1, 1, 0, 0 }; // Left, Right, Up, Down
+        int[] dx = { -1, 1, 0, 0 }; 
         int[] dy = { 0, 0, 1, -1 };
 
         for (int i = 0; i < dx.Length; i++)
@@ -119,7 +114,7 @@ public class Grid : MonoBehaviour
 
             if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
             {
-                neighbours.Add(grid[checkX, checkY]); // Get neighbours from the first grid
+                neighbours.Add(grid[checkX, checkY]); // getting neighbours from the first grid
             }
         }
 
@@ -133,27 +128,27 @@ public class Grid : MonoBehaviour
 
         foreach (GameObject gridObject in gridObjects)
         {
-            // Calculate the position of the bottom left corner of the grid
+            // calculation of the position of the bottom left corner of the grid
             Vector3 worldBottomLeft = gridObject.transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.up * gridWorldSize.y / 2;
 
-            // Convert the world position to grid coordinates within the current grid object
+            // convertion of the world position to grid coordinates within the current grid object
             float percentX = Mathf.Clamp01((worldPosition.x - worldBottomLeft.x) / gridWorldSize.x);
             float percentY = Mathf.Clamp01((worldPosition.y - worldBottomLeft.y) / gridWorldSize.y);
 
             int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
             int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
 
-            // Ensure the coordinates are within bounds
+            // coordinates are within bounds
             x = Mathf.Clamp(x, 0, gridSizeX - 1);
             y = Mathf.Clamp(y, 0, gridSizeY - 1);
 
-            // Get the node at the calculated coordinates
+            // getting the node at the calculated coordinates
             Node node = grid[x, y];
 
-            // Calculate the distance from the world position to the node
+            // calculation of the distance from the world position to the node
             float distance = Vector3.Distance(worldPosition, node.worldPosition);
 
-            // Update the closest node if the current node is closer
+            // updating the closest node if the current node is closer
             if (distance < closestDistance)
             {
                 closestNode = node;
@@ -184,7 +179,7 @@ public class Grid : MonoBehaviour
             {
                 Gizmos.color = Color.black;
             }
-            else if (IsNodeAboveCollectible(n.worldPosition)) // Check if the node is above a collectible object
+            else if (IsNodeAboveCollectible(n.worldPosition)) // checking if the node is above a collectible object
             {
                 Gizmos.color = Color.green;
             }
@@ -201,7 +196,7 @@ public class Grid : MonoBehaviour
             Gizmos.color = Color.blue;
             Gizmos.DrawCube(path[0].worldPosition, new Vector3(nodeDiameter - 0.1f, nodeDiameter - 0.1f, 0));
 
-            Gizmos.color = Color.green; // Change color to green for the end node
+            Gizmos.color = Color.green; // changing color to green for the end node
             Gizmos.DrawCube(path[path.Count - 1].worldPosition, new Vector3(nodeDiameter - 0.1f, nodeDiameter - 0.1f, 0));
         }
     }

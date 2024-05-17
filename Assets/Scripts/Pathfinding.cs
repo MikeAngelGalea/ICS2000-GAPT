@@ -7,13 +7,15 @@ public class Pathfinding : MonoBehaviour
     public Transform seeker;
     Grid grid;
 
+//awake called when instance is loaded
     void Awake()
     {
         grid = GetComponent<Grid>();
     }
-
+//calling update once per frame
     void Update()
     {
+        //continuously finding the closest collectible item
         FindClosestCollectible();
     }
 
@@ -22,7 +24,7 @@ public class Pathfinding : MonoBehaviour
         GameObject[] collectibles = GameObject.FindGameObjectsWithTag("Collectible");
         Node closestCollectible = null;
         float shortestDistance = Mathf.Infinity;
-
+//iterate through each collectible
         foreach (GameObject collectible in collectibles)
         {
             Node collectibleNode = grid.NodeFromWorldPoint(collectible.transform.position);
@@ -34,23 +36,19 @@ public class Pathfinding : MonoBehaviour
                 closestCollectible = collectibleNode;
             }
         }
-
+//if collectible is found, find path to collectible
         if (closestCollectible != null)
         {
             Vector3 closestCollectiblePosition = closestCollectible.worldPosition;
-            //Debug.Log("Closest Collectible Position: " + closestCollectiblePosition);
             FindPath(seeker.position, closestCollectiblePosition);
         }
     }
-
+// method for generating path from start pos to target pos
     void FindPath(Vector3 startPos, Vector3 targetPos)
     {
         Node startNode = grid.NodeFromWorldPoint(startPos);
         Node targetNode = grid.NodeFromWorldPoint(targetPos);
 
-        // Debug output
-        //Debug.Log("Start Node: " + startNode.worldPosition);
-        //Debug.Log("Target Node: " + targetNode.worldPosition);
 
 
 		List<Node> openSet = new List<Node>();
@@ -78,7 +76,7 @@ public class Pathfinding : MonoBehaviour
 				if (!neighbour.walkable || closedSet.Contains(neighbour)) {
 					continue;
 				}
-
+//calculation of new cost to reach neighbour
 				int newCostToNeighbour = node.gCost + GetDistance(node, neighbour);
 				if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
 					neighbour.gCost = newCostToNeighbour;
@@ -91,33 +89,35 @@ public class Pathfinding : MonoBehaviour
 			}
 		}
 	}
+    //retracing path from end node to start node
     void RetracePath(Node startNode, Node endNode) {
 		List<Node> path = new List<Node>();
 		Node currentNode = endNode;
-
+//traverse end node using the parent nodes
 		while (currentNode != startNode) {
 			path.Add(currentNode);
 			currentNode = currentNode.parent;
 		}
+        //reversing path 
 		path.Reverse();
-
+//setting path
 		grid.path = path;
 
 	}
-
+//calculation of distance between 2 nodes
 	int GetDistance(Node nodeA, Node nodeB) {
 		int dstX = Mathf.Abs(nodeA.gridX - nodeB.gridX);
 		int dstY = Mathf.Abs(nodeA.gridY - nodeB.gridY);
-
+//return distance with weighting for diagonal movement
 		if (dstX > dstY)
 			return 14*dstY + 10* (dstX-dstY);
 		return 14*dstX + 10 * (dstY-dstX);
 	}
 
-    // Method to set the path for the player
+    // setting the path for the player
     public void SetPath(Vector3[] newPath)
     {
-        // Pass the new path to the PlayerController script
+        // passing the new path to the playercontroller script
         playerController.SetPath(newPath);
     }
 }
